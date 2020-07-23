@@ -5,7 +5,6 @@
 
 const OAuth2Strategy = require('passport-oauth2'),
     crypto = require('crypto'),
-    AppleClientSecret = require("./token"),
     util = require('util')
     querystring = require('querystring'),
     jwt = require('jsonwebtoken');
@@ -39,8 +38,7 @@ const OAuth2Strategy = require('passport-oauth2'),
  *  Developer Account page
  * @param {string} options.callbackURL – The identifier for the private key on the Apple
  *  Developer Account page
- * @param {string} options.privateKeyLocation - Location to the private key
- * @param {string} options.privateKeyString - Private key string
+ * @param {string} options.clientSecret - Client Token
  * @param {boolean} options.passReqToCallback - Determine if the req will be passed to passport cb function
  * @param {function} verify
  * @access public
@@ -56,24 +54,18 @@ function Strategy(options, verify) {
     OAuth2Strategy.call(this, options, verify);
     this.name = 'apple';
 
-    // Initiliaze the client_secret generator
-    const _tokenGenerator = new AppleClientSecret({
-        "client_id": options.clientID,
-        "team_id": options.teamID,
-        "key_id": options.keyID
-    }, options.privateKeyLocation, options.privateKeyString);
 
     // Get the OAuth Access Token from Apple's server
     // using the grant code / refresh token.
 
     this._oauth2.getOAuthAccessToken = function(code, params, callback) {
         // Generate the client_secret using the library
-        _tokenGenerator.generate().then((client_secret) => {
+
             params = params || {};
             const codeParam = params.grant_type === 'refresh_token' ? 'refresh_token' : 'code';
             params[codeParam] = code;
             params['client_id'] = this._clientId;
-            params['client_secret'] = client_secret;
+            params['client_secret'] = options.clientSecret;
 
             const post_data = querystring.stringify(params);
             const post_headers = {
@@ -97,9 +89,7 @@ function Strategy(options, verify) {
                     }
                 }
             )
-        }).catch((error) => {
-            callback(error);
-        });
+
     }
 }
 
