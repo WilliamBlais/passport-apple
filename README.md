@@ -1,5 +1,7 @@
 #  Sign in with Apple for Passport.js
 
+Modified to use a pre-generated client_secret.
+
 <a href="https://twitter.com/intent/follow?screen_name=ananayarora"><img src="https://img.shields.io/twitter/follow/ananayarora.svg?label=Follow%20@ananayarora" alt="Follow @ananayarora"></img></a>
 <a href="https://npmjs.com/package/passport-apple">
   <img src="https://img.shields.io/npm/dt/passport-apple.svg"></img>
